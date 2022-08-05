@@ -1,14 +1,8 @@
-import {
-  createContext,
-  FC,
-  FunctionComponent,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, FC, ReactNode, useEffect, useState } from "react";
 import GetProducts from "../api/GetProducts";
 
 export type ComplianceType = { id: number };
+export type ComplianceTypeId = ComplianceType["id"];
 
 export interface Product {
   id: number;
@@ -20,6 +14,8 @@ interface ProductsContext {
   products: Product[];
   searchValue: string;
   setSearchValue: (searchValue: string) => void;
+  complianceIds: ComplianceTypeId[];
+  setComplianceIds: (complianceId: ComplianceTypeId[]) => void;
   isLoading: boolean;
 }
 
@@ -27,6 +23,10 @@ export const ProductsContext = createContext<ProductsContext>({
   products: [],
   searchValue: "",
   setSearchValue(searchValue) {
+    return;
+  },
+  complianceIds: [],
+  setComplianceIds(complianceId) {
     return;
   },
   isLoading: true,
@@ -39,13 +39,17 @@ interface Props {
 const ProductsProvider: FC<Props> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchValue, setSearchValue] = useState("");
+  const [complianceIds, setComplianceIds] = useState<ComplianceTypeId[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(searchValue);
 
-    GetProducts({ pageSize: 18, searchText: searchValue }).then(({ data }) => {
+    GetProducts({
+      pageSize: 18,
+      searchText: searchValue,
+      complianceTypeIds: complianceIds,
+    }).then(({ data }) => {
       setIsLoading(false);
       setProducts(
         data.results.map<Product>(({ id, name, complianceType }) => ({
@@ -54,19 +58,19 @@ const ProductsProvider: FC<Props> = ({ children }) => {
           complianceType,
         }))
       );
-      console.log(
-        data.results.map<Product>(({ id, name, complianceType }) => ({
-          id,
-          name,
-          complianceType,
-        }))
-      );
     });
-  }, [searchValue]);
+  }, [searchValue, complianceIds]);
 
   return (
     <ProductsContext.Provider
-      value={{ products, searchValue, setSearchValue, isLoading }}
+      value={{
+        products,
+        searchValue,
+        setSearchValue,
+        complianceIds,
+        setComplianceIds,
+        isLoading,
+      }}
     >
       {children}
     </ProductsContext.Provider>
