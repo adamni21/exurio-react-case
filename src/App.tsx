@@ -1,17 +1,17 @@
 import {
   MantineProvider,
-  Title,
   Text,
   AppShell,
   Header,
-  Navbar,
   MediaQuery,
   Burger,
+  Navbar,
 } from "@mantine/core";
 import { useState } from "react";
 import { theme } from "./theme";
 import ProductsProvider from "./contexts/ProductsContext";
 import ProductsGrid from "./ProductsGrid/ProductsGrid";
+import ProductsFilter from "./ProductsFilter/ProductsFilter";
 
 export default function App() {
   const [opened, setOpened] = useState(false);
@@ -25,14 +25,14 @@ export default function App() {
             <Navbar
               p="md"
               hiddenBreakpoint="sm"
-              hidden={!opened}
+              hidden={opened}
               width={{ sm: 200, md: 230, lg: 300 }}
             >
-              <Text>Application navbar</Text>
+              <ProductsFilter />
             </Navbar>
           }
           header={
-            <Header height={90} p="sm">
+            <Header height={75} p="sm">
               <div
                 style={{
                   display: "flex",
@@ -48,8 +48,9 @@ export default function App() {
                     mr="xl"
                   />
                 </MediaQuery>
-
-                <Title>Se farlige og mangelfulde produkter</Title>
+                <Text size="xl" weight="bold">
+                  Se farlige og mangelfulde produkter
+                </Text>
               </div>
             </Header>
           }
