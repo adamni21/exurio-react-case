@@ -18,11 +18,17 @@ export interface Product {
 
 interface ProductsContext {
   products: Product[];
+  searchValue: string;
+  setSearchValue: (searchValue: string) => void;
   isLoading: boolean;
 }
 
 export const ProductsContext = createContext<ProductsContext>({
   products: [],
+  searchValue: "",
+  setSearchValue(searchValue) {
+    return;
+  },
   isLoading: true,
 });
 
@@ -32,12 +38,14 @@ interface Props {
 
 const ProductsProvider: FC<Props> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchValue, setSearchValue] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
+    console.log(searchValue);
 
-    GetProducts({ pageSize: 18 }).then(({ data }) => {
+    GetProducts({ pageSize: 18, searchText: searchValue }).then(({ data }) => {
       setIsLoading(false);
       setProducts(
         data.results.map<Product>(({ id, name, complianceType }) => ({
@@ -46,10 +54,20 @@ const ProductsProvider: FC<Props> = ({ children }) => {
           complianceType,
         }))
       );
+      console.log(
+        data.results.map<Product>(({ id, name, complianceType }) => ({
+          id,
+          name,
+          complianceType,
+        }))
+      );
     });
-  }, []);
+  }, [searchValue]);
+
   return (
-    <ProductsContext.Provider value={{ products, isLoading }}>
+    <ProductsContext.Provider
+      value={{ products, searchValue, setSearchValue, isLoading }}
+    >
       {children}
     </ProductsContext.Provider>
   );
