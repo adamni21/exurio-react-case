@@ -19,7 +19,7 @@ interface Response {
 const GetProducts = (params: Params, config?: AxiosRequestConfig) =>
   axios.post<Response, AxiosResponse<Response>, Params>(
     "https://pfp-public-productdb-api.azurewebsites.net/api/product/search",
-    { page: 1 },
+    { ...params },
     config
   );
 
