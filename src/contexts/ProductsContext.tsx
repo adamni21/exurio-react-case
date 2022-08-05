@@ -15,7 +15,16 @@ export interface Product {
   name: string;
   complianceType: ComplianceType;
 }
-export const ProductsContext = createContext<Product[]>([]);
+
+interface ProductsContext {
+  products: Product[];
+  isLoading: boolean;
+}
+
+export const ProductsContext = createContext<ProductsContext>({
+  products: [],
+  isLoading: true,
+});
 
 interface Props {
   children?: ReactNode;
@@ -23,9 +32,13 @@ interface Props {
 
 const ProductsProvider: FC<Props> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
+
     GetProducts({ pageSize: 18 }).then(({ data }) => {
+      setIsLoading(false);
       setProducts(
         data.results.map<Product>(({ id, name, complianceType }) => ({
           id,
@@ -36,7 +49,7 @@ const ProductsProvider: FC<Props> = ({ children }) => {
     });
   }, []);
   return (
-    <ProductsContext.Provider value={products}>
+    <ProductsContext.Provider value={{ products, isLoading }}>
       {children}
     </ProductsContext.Provider>
   );
