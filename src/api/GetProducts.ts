@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { ApiBaseUrl } from "../Constants";
 import { Product } from "../contexts/ProductsContext";
 
 interface Params {
@@ -18,7 +19,7 @@ interface Response {
 
 const GetProducts = (params: Params, config?: AxiosRequestConfig) =>
   axios.post<Response, AxiosResponse<Response>, Params>(
-    "https://pfp-public-productdb-api.azurewebsites.net/api/product/search",
+    `${ApiBaseUrl}/product/search`,
     { ...params },
     config
   );
